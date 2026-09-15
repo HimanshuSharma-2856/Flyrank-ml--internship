@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <rect width="1200" height="700" fill="#f7f3ea"/>
+  <path d="M80 80 C220 38 310 105 430 72 S680 45 820 82 S1050 45 1120 90" fill="none" stroke="#d3c2a6" stroke-width="4"/>
+  <text x="80" y="145" font-family="Georgia, serif" font-size="42" fill="#24211d">Portfolio path</text>
+  <text x="82" y="180" font-family="Arial, sans-serif" font-size="20" fill="#62594f">One claim. One proof path. One next action.</text>
+  <g font-family="Arial, sans-serif" fill="#24211d">
+    <rect x="80" y="240" width="240" height="150" rx="10" fill="#e8d9bf" stroke="#24211d" stroke-width="3"/>
+    <text x="110" y="285" font-size="26" font-weight="bold">LANDING</text>
+    <text x="110" y="322" font-size="18">Claim + finding</text>
+    <text x="110" y="350" font-size="18">Read the case study</text>
+    <rect x="410" y="240" width="300" height="150" rx="10" fill="#d9e3dc" stroke="#24211d" stroke-width="3"/>
+    <text x="440" y="285" font-size="26" font-weight="bold">WORK</text>
+    <text x="440" y="322" font-size="18">Question, evidence, limits</text>
+    <text x="440" y="350" font-size="18">Discuss a similar problem</text>
+    <rect x="800" y="240" width="240" height="150" rx="10" fill="#ead8d0" stroke="#24211d" stroke-width="3"/>
+    <text x="830" y="285" font-size="26" font-weight="bold">ABOUT</text>
+    <text x="830" y="322" font-size="18">Who I am</text>
+    <text x="830" y="350" font-size="18">How I work</text>
+    <rect x="470" y="505" width="260" height="110" rx="10" fill="#f0c96d" stroke="#24211d" stroke-width="3"/>
+    <text x="515" y="550" font-size="26" font-weight="bold">CONTACT</text>
+    <text x="510" y="580" font-size="18">Start the conversation</text>
+  </g>
+  <g stroke="#24211d" stroke-width="4" fill="none">
+    <path d="M320 315 H410"/>
+    <path d="M710 315 H800"/>
+    <path d="M560 390 V505"/>
+  </g>
+  <g fill="#24211d">
+    <path d="M410 315 l-16 -10 v20 z"/>
+    <path d="M800 315 l-16 -10 v20 z"/>
+    <path d="M560 505 l-10 -16 h20 z"/>
+  </g>
+</svg>
