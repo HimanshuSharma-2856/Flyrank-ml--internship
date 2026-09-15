@@ -1,9 +1,9 @@
 # Portfolio Sitemap and Claude Project Setup
 
 **Build:** FlyRank ML portfolio  
-**Audience:** A content lead or hiring reviewer deciding whether my analysis is careful enough to discuss  
-**One action:** Open the case study, then contact me to discuss a similar content-analysis problem  
-**Proof statement:** I use observable page structure to organize a large content inventory into interpretable archetypes that help editors compare like with like. The work is descriptive decision support, not proof that a cluster causes better search performance.
+**Audience:** A content operations lead at an SEO or content agency managing a large page portfolio  
+**One action:** Email me to discuss a similar content-inventory problem  
+**Proof statement:** I can perform content-archetype analysis: I can use observable page structure to group a large content inventory into interpretable page profiles that help a content operations lead compare pages and decide what deserves review first. The work is descriptive decision support, not proof that a cluster causes better search performance.
 
 ## 1. Small sitemap
 
