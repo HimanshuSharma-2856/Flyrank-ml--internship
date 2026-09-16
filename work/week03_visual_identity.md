@@ -65,20 +65,31 @@ Use DM Sans for every heading, paragraph, label, and button. Use IBM Plex Mono o
 
 ### Final image set
 
-| Image | Role | Decision | Why it serves the proof |
+| Image | Page / content need | Decision | Why it serves the proof |
 |---|---|---|---|
-| `outputs/charts/top_feature_importance.svg` | Work page evidence | Keep, after a clean crop and readable caption | It shows which measured inputs mattered to the refresh model and keeps the work inspectable. |
-| `outputs/charts/action_mix.svg` | Work page evidence | Keep, after checking labels at mobile width | It connects analysis to the reviewer-facing action categories without pretending the model makes the editorial decision. |
-| `outputs/charts/confidence_mix.svg` | Work page evidence | Keep if the case study discusses confidence; otherwise omit | It supports the distinction between a review aid and an automatic rewrite instruction. |
-| Executed `w03_data_contract.ipynb` query output | Work page evidence | Keep as a cropped screenshot or rendered table | It proves the row grain, March scope, availability filter, and leakage check from the actual warehouse work. |
-| Executed `w01_research_question.ipynb` structural comparison output | Landing or Work evidence | Keep as a clean table crop | It gives the visitor one measured contrast before asking them to read the full case. |
-| Real portrait, if used | About | Use a real photo only | A generated portrait would misrepresent the person behind the judgment. |
+| `outputs/charts/top_feature_importance.svg` | Work / case study evidence | Keep, after a clean crop and readable caption | It shows which measured inputs mattered to the refresh model and keeps the work inspectable. |
+| `outputs/charts/action_mix.svg` | Work / case study evidence | Keep, after checking labels at mobile width | It connects analysis to the reviewer-facing action categories without pretending the model makes the editorial decision. |
+| `outputs/charts/confidence_mix.svg` | Work / case study evidence | Keep only if the case study discusses confidence; otherwise omit | It supports the distinction between a review aid and an automatic rewrite instruction. |
+| Executed `w03_data_contract.ipynb` query output | Work / case study evidence | Keep as a cropped screenshot or rendered table | It proves the row grain, March scope, availability filter, and leakage check from the actual warehouse work. |
+| Executed `w01_research_question.ipynb` structural comparison output | Landing finding or Work evidence | Keep as a clean table crop | It gives the visitor one measured contrast before asking them to read the full case. |
+| Real portrait, when the About page is built | About page subject image | Use a real photo only; do not substitute an AI portrait | A generated portrait would misrepresent the person behind the judgment. |
 
 **Image rule:** screenshots of the work are evidence, not decoration. Crop away browser chrome, keep labels legible, redact anything private, and write one sentence below each image explaining what a stranger should notice.
 
 ### Generated connective-tissue options
 
 I do not need a generated hero image for this portfolio. If a visual separator is useful, the only acceptable generated direction is a quiet editorial texture: flat paper grain, soft off-white field, one deep-green line, and no objects, faces, fake dashboards, or glowing AI motifs. Keep every generated asset in that same restrained style and use it only between sections.
+
+| Iteration | Prompt decision | Outcome |
+|---|---|---|
+| 1 | “Create a polished AI analytics hero with dashboards and data streams.” | Rejected: it invents a product and competes with the evidence. |
+| 2 | “Create a flat warm-white paper texture with one deep-green rule, editorial and quiet, with no objects or text.” | Direction kept for optional separators; it matches the palette and leaves the actual analysis in charge. |
+
+No generated connective-tissue asset is a keeper yet. The portfolio can ship with real work captures and no decorative image at all.
+
+### Real capture decisions
+
+The charts and notebook outputs win over generated illustrations because they show the actual inputs, checks, and decisions a reviewer needs to inspect. The About page will use a real portrait when available; an AI-generated face is explicitly rejected because the subject is me, not a visual placeholder.
 
 ### Rejection note
 
