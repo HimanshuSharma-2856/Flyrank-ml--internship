@@ -46,13 +46,16 @@ The palette is deliberately small. Teal signals the path through the evidence; a
 
 ### Logo / favicon
 
-The favicon is a simple `FR` mark in the main green. It is legible at small size, contains no decorative claim, and does not compete with a chart or case-study title.
+The favicon is a simple `FR` monogram in the main green with a small amber rule. It is legible at small size, contains no decorative claim, and does not compete with a chart or case-study title.
 
 Asset: [portfolio-favicon.svg](portfolio-favicon.svg)
 
+![FR monogram favicon](portfolio-favicon.svg)
+
 ### Two-line style note
 
-DM Sans on warm white with near-black text, deep green links, and one restrained amber accent. The mood is calm, precise, and editorial: generous space and clear evidence framing let the analysis, numbers, and screenshots do the memorable work.
+Fonts: DM Sans for headings, body text, labels, and buttons; IBM Plex Mono only for code, measured values, and compact metadata. Palette: `#17201D`, `#F8F7F2`, `#145C52`, and `#E3A84B`.
+Mood: Calm, precise, and editorial, with generous space and clear evidence framing so the analysis, numbers, and screenshots do the memorable work.
 
 ### Reusable build note
 
