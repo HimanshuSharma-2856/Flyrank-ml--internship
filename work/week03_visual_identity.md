@@ -10,6 +10,23 @@
 
 This is short enough to remember and specific enough to test. It does not promise better rankings or pretend that the clustering work replaces editorial judgment.
 
+### Claim selection record
+
+These ten candidate lines were pressure-tested for specificity, evidence, and restraint:
+
+1. I use page structure to make content review easier.
+2. I turn content data into clearer editorial priorities.
+3. I help content teams compare pages before deciding what to change.
+4. I use observable page structure to organize large content inventories.
+5. I turn page structure into interpretable content profiles.
+6. I group similar pages so editors can review like with like.
+7. I turn page structure into a clearer, evidence-led review queue.
+8. I help editors find the next page worth reviewing.
+9. I make large page portfolios easier to inspect and discuss.
+10. I use descriptive analysis to support better content-review decisions.
+
+I chose **I turn page structure into a clearer, evidence-led review queue.** It names the input, the useful output, and the evidence boundary without claiming that clustering improves rankings or replaces editorial judgment.
+
 ## Content map
 
 Every page moves the same reader toward the same action: email me about a similar content-inventory problem.
@@ -22,6 +39,16 @@ Every page moves the same reader toward the same action: email me about a simila
 | Contact | Specific invitation -> email address -> privacy-safe note | No case needed | Email me | Confirm the email link works on the deployed page |
 
 **Deliberately omitted:** blog, services page, testimonials, gallery, and a resume page. They do not currently add proof for this claim or improve the one action.
+
+## Still need to gather
+
+- A clean, privacy-safe screenshot of the executed `w03_data_contract.ipynb` checks.
+- A final cluster/profile output from the structured content-archetype work, with readable labels and a short caption.
+- One clean chart crop for the landing page, plus the final deployed landing URL.
+- The deployed case-study URL and repository or notebook link that can be shared publicly.
+- A real portrait for the About page, if that page ships; no AI portrait will be used.
+- A working email link on the deployed Contact page.
+- Any before/after numbers or testimonial only if the internship produces real, permission-safe evidence; none will be invented or implied before then.
 
 ## Identity kit
 
