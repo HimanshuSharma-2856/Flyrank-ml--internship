@@ -15,6 +15,7 @@
       --paper: #F8F7F2;
       --green: #145C52;
       --amber: #E3A84B;
+      --muted: #5B6661;
     }
 
     * { box-sizing: border-box; }
@@ -59,6 +60,20 @@
       margin: 0 0 36px;
       background: var(--amber);
     }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 24px;
+      margin-top: 32px;
+    }
+    .links a {
+      font-size: 0.95rem;
+    }
+    .note {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
     a {
       color: var(--green);
       font-weight: 700;
@@ -80,7 +95,15 @@
     <div class="rule" aria-hidden="true"></div>
     <p>This portfolio is taking shape around observable page structure, interpretable profiles, and careful editorial review.</p>
     <p><a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship/blob/main/work/week03_visual_identity.md">See the project map and identity notes</a></p>
-    <footer>Empty but live · the evidence comes next</footer>
+    <nav class="links" aria-label="Profile links">
+      <a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship">GitHub project</a>
+      <a href="mailto:himanshusharmadurgapur28@gmail.com">Email me</a>
+      <a href="https://www.linkedin.com/">LinkedIn profile</a>
+      <a href="mailto:himanshusharmadurgapur28@gmail.com?subject=CV%20request">Request my CV</a>
+      <a href="mailto:himanshusharmadurgapur28@gmail.com?subject=Portfolio%20conversation">Book a conversation</a>
+    </nav>
+    <p class="note">LinkedIn, CV, and booking destinations will be replaced with their direct links when those assets are ready.</p>
+    <footer>Personal portfolio · evidence comes next</footer>
   </main>
 </body>
 </html>
