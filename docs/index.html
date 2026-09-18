@@ -68,6 +68,9 @@
     }
     .links a {
       font-size: 0.95rem;
+      min-height: 44px;
+      align-items: center;
+      display: inline-flex;
     }
     .note {
       margin-top: 28px;
@@ -113,6 +116,7 @@
     }
     button {
       margin-top: 20px;
+      min-height: 44px;
       padding: 11px 16px;
       border: 0;
       border-radius: 0;
@@ -120,6 +124,13 @@
       color: var(--paper);
       cursor: pointer;
       font: 600 14px/1.3 "IBM Plex Mono", monospace;
+    }
+    a:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--amber);
+      outline-offset: 3px;
     }
     a {
       color: var(--green);
@@ -146,10 +157,10 @@
       <a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship">GitHub project</a>
       <a href="mailto:himanshusharmadurgapur28@gmail.com">Email me</a>
       <a href="https://www.linkedin.com/in/himanshu-sharma-a207b4340/">LinkedIn profile</a>
-      <a href="mailto:himanshusharmadurgapur28@gmail.com?subject=CV%20request">Request my CV</a>
-      <a href="mailto:himanshusharmadurgapur28@gmail.com?subject=Portfolio%20conversation">Book a conversation</a>
+      <a href="mailto:himanshusharmadurgapur28@gmail.com?subject=CV%20request">Request CV by email</a>
+      <a href="mailto:himanshusharmadurgapur28@gmail.com?subject=Portfolio%20conversation">Book by email</a>
     </nav>
-    <p class="note">LinkedIn, CV, and booking destinations will be replaced with their direct links when those assets are ready.</p>
+    <p class="note">CV and booking currently use email, so visitors have one clear way to reach me while the portfolio grows.</p>
     <section class="contact" aria-labelledby="contact-title">
       <h2 id="contact-title">Discuss a similar problem</h2>
       <p>This is the one live feature on the site. Your message is sent to my email through the free FormSubmit service.</p>
