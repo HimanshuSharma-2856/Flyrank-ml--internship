@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="FlyRank content-archetype analysis portfolio.">
   <title>Himanshu Sharma | FlyRank content analysis</title>
+  <link rel="canonical" href="https://himanshusharma-2856.github.io/Flyrank-ml--internship/">
+  <meta name="robots" content="index,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Himanshu Sharma | FlyRank content analysis">
+  <meta property="og:description" content="Evidence-led content-archetype analysis that turns page structure into a clearer editorial review queue.">
+  <meta property="og:url" content="https://himanshusharma-2856.github.io/Flyrank-ml--internship/">
+  <meta property="og:site_name" content="Himanshu Sharma">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Himanshu Sharma | FlyRank content analysis">
+  <meta name="twitter:description" content="Evidence-led content-archetype analysis that turns page structure into a clearer editorial review queue.">
   <link rel="icon" href="portfolio-favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -165,19 +175,41 @@
     <section class="contact" aria-labelledby="contact-title">
       <h2 id="contact-title">Discuss a similar problem</h2>
       <p>This is the one live feature on the site. Your message is sent to my email through the free FormSubmit service.</p>
-      <form action="https://formsubmit.co/himanshusharmadurgapur28@gmail.com" method="POST">
+      <form id="contact-form" action="https://formsubmit.co/himanshusharmadurgapur28@gmail.com" method="POST">
         <input type="hidden" name="_subject" value="Portfolio contact message">
         <input type="hidden" name="_next" value="https://himanshusharma-2856.github.io/Flyrank-ml--internship/">
         <label for="name">Name</label>
-        <input id="name" name="name" type="text" autocomplete="name" required>
+        <input id="name" name="name" type="text" autocomplete="name" maxlength="100" required>
         <label for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" required>
+        <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required>
         <label for="message">Message</label>
-        <textarea id="message" name="message" required></textarea>
+        <textarea id="message" name="message" maxlength="3000" required></textarea>
         <button type="submit">Send message</button>
       </form>
     </section>
     <footer>Personal portfolio · evidence comes next</footer>
   </main>
+  <script>
+    const contactForm = document.querySelector('#contact-form');
+    const submitButton = contactForm.querySelector('button[type="submit"]');
+    let submissionStarted = false;
+
+    contactForm.addEventListener('submit', (event) => {
+      if (submissionStarted) {
+        event.preventDefault();
+        return;
+      }
+
+      submissionStarted = true;
+      submitButton.disabled = true;
+      submitButton.textContent = 'Sending...';
+    });
+
+    window.addEventListener('pageshow', () => {
+      submissionStarted = false;
+      submitButton.disabled = false;
+      submitButton.textContent = 'Send message';
+    });
+  </script>
 </body>
 </html>

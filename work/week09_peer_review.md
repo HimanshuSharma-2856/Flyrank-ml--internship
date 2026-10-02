@@ -4,6 +4,32 @@
 
 Live portfolio: <https://himanshusharma-2856.github.io/Flyrank-ml--internship/>
 
+## Hardening record - 2026-10-02
+
+### Fix-now
+
+| Finding | Fix | Evidence and status |
+|---|---|---|
+| The page had a title and description but no canonical URL or social-share metadata. | Added canonical, robots, Open Graph, and Twitter title/description tags in `docs/index.html`. | Present in the edited source. The public page was opened before the edit; deployment of this change is not confirmed. |
+| The contact fields had no length limits and the submit button had no repeat-submit guard. | Added 100-character name, 254-character email, and 3,000-character message limits; disable the submit button after the first valid submit and reset it on `pageshow`. | Present in the edited source. Runtime/double-click behavior is not confirmed because browser automation could not launch. |
+
+### Known limitations and unverified checks
+
+| Finding | Status |
+|---|---|
+| The form posts to FormSubmit. Delivery, service outages, spam handling, and server-side duplicate prevention are outside this static page's control. | Known limitation; do not send real test messages without consent. |
+| Empty fields and malformed email are marked with native HTML constraints (`required` and `type="email"`), but browser validation messages were not exercised. | Source-confirmed, behavior unverified. |
+| A public-page snapshot confirmed the page title, primary links, and contact fields render. Individual links were not opened, and a second browser/device was not tested. | Partial check only. |
+| Google search redirected to a JavaScript retry challenge. Bing returned general FlyRank and unrelated name results for `"Himanshu Sharma" FlyRank`; the exact `site:` query showed no matching portfolio listing in the returned results. | Search indexing/findability not established; the new metadata does not guarantee indexing. |
+| PageSpeed Insights loaded for the public URL on 2026-10-02. It showed “No Data” for real-user metrics while diagnostics were still loading; no lab score was available. The direct PSI API request returned HTTP 429. | Speed check attempted; performance score unverified. |
+| Browser interaction could not be completed: the shared-page tools could not attach to the opened tab, and the dedicated Playwright runner had no Chromium executable. | Empty/garbage submission, fast double-submit, mobile layout, and link-click checks remain outstanding. |
+
+### Hardening review gate
+
+- Real mentor/peer feedback: **PENDING - no reviewer response recorded**
+- Reviewer must-fixes: **NOT KNOWN - cannot claim addressed without actual feedback**
+- Checkpoint: **REVISE / WAITING FOR BROWSER EVIDENCE AND REAL REVIEW**
+
 ### Proof statement sent to the reviewer
 
 I can perform **content-archetype analysis**: I use observable page structure to group a large
