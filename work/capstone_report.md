@@ -8,13 +8,13 @@
 
 ## Abstract
 
-Which existing content items should a human review first when editorial time is limited? I use the bundled 30,000-row, 44-column anonymized starter snapshot covering 32 pseudonymized clients, with a proxy decline label derived from recent-versus-prior impressions. A random-forest ranker is compared with a transparent rule score on the same fixed-seed client holdout, with identifiers and label-defining fields excluded from model features. The model's held-out Precision@50 is 0.660 versus 0.280 for the rule baseline and a 0.391 label base rate. The output is a human-review ordering for this snapshot, not a forecast of future performance or evidence that refreshing content causes recovery.
+FlyRank's content-refresh opportunity lane asks which pages to review first for refresh, expansion, protection, pruning, or monitoring when editorial capacity is limited. I use the bundled 30,000-row, 44-column anonymized starter snapshot covering 32 pseudonymized clients, with a proxy label for recent impression decline. A random-forest ranker is compared with a transparent rule on the same fixed-seed, client-grouped holdout, excluding IDs and label-defining fields from model features. On 2,325 held-out items from six clients, model Precision@50 is 0.660 versus 0.280 for the rule and a 0.391 label prevalence. This supports ordering human review for this snapshot and proxy target; it is not a future decline forecast or evidence that a refresh causes recovery.
 
 ## Introduction / Problem Statement
 
-An editor has more pages to inspect than time to inspect them. This study asks whether a compact ranking can order a review list more usefully than a transparent freshness-and-visibility rule, measured as the share of proxy-labelled declines among the first 50 items. The intended decision is what to inspect first, not what to rewrite or publish.
+This case study addresses FlyRank's content-refresh opportunity lane: from a portfolio of pages, which should an editor review first for refresh, expansion, protection, pruning, or monitoring? The practical tension is limited review capacity: a recent search-performance decline can identify an item for inspection, but does not by itself say which intervention is appropriate. I operationalize the lane's review-first decision as whether a compact ranking places more proxy-labelled declines in the first 50 slots than a transparent freshness-and-visibility rule.
 
-The cost of a false positive is wasted review effort or an unnecessary change; a false negative can delay attention to an item that merits investigation. Neither cost nor the impact of an editorial action is measured here. The model is therefore a triage aid for a supervised pilot, not an automated content workflow.
+On the anonymized starter snapshot, the random forest reached 0.660 Precision@50 versus 0.280 for the rule on one client-held-out split (base rate 0.391). That result is evidence about ranking this proxy label for review, not proof those pages need a refresh. The dataset contains no editorial outcomes or treatment comparison, so the system can order human attention but cannot choose an intervention or claim that a change will recover traffic.
 
 ## Data
 
