@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" role="img" aria-labelledby="title desc">
+  <title id="title">Average precision and ROC AUC on the same client holdout</title>
+  <desc id="desc">Left panel: average precision is 0.466 for the rule baseline and 0.610 for the random forest; dashed reference is base rate 0.391. Right panel: ROC AUC is 0.622 for the rule and 0.750 for the random forest; dashed reference is chance-level 0.500.</desc>
+  <rect width="900" height="500" fill="#ffffff"/>
+  <text x="54" y="38" fill="#17201d" font-family="Arial, sans-serif" font-size="22" font-weight="700">Ranking-wide comparison on the same client holdout</text>
+  <text x="54" y="62" fill="#52605a" font-family="Arial, sans-serif" font-size="14">Higher is better; reference lines differ by metric</text>
+  <g stroke="#d5ded9" stroke-width="1">
+    <line x1="82" y1="395" x2="415" y2="395"/><line x1="82" y1="335" x2="415" y2="335"/>
+    <line x1="82" y1="275" x2="415" y2="275"/><line x1="82" y1="215" x2="415" y2="215"/>
+    <line x1="82" y1="155" x2="415" y2="155"/><line x1="82" y1="95" x2="415" y2="95"/>
+    <line x1="485" y1="395" x2="818" y2="395"/><line x1="485" y1="335" x2="818" y2="335"/>
+    <line x1="485" y1="275" x2="818" y2="275"/><line x1="485" y1="215" x2="818" y2="215"/>
+    <line x1="485" y1="155" x2="818" y2="155"/><line x1="485" y1="95" x2="818" y2="95"/>
+  </g>
+  <g fill="#34413b" font-family="Arial, sans-serif" font-size="12" text-anchor="end">
+    <text x="72" y="399">0.0</text><text x="72" y="339">0.2</text><text x="72" y="279">0.4</text><text x="72" y="219">0.6</text><text x="72" y="159">0.8</text><text x="72" y="99">1.0</text>
+  </g>
+  <text x="247" y="88" fill="#17201d" font-family="Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle">Average precision</text>
+  <text x="651" y="88" fill="#17201d" font-family="Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle">ROC AUC</text>
+  <line x1="82" y1="277.7" x2="415" y2="277.7" stroke="#263238" stroke-width="2" stroke-dasharray="7 5"/>
+  <line x1="485" y1="245" x2="818" y2="245" stroke="#263238" stroke-width="2" stroke-dasharray="7 5"/>
+  <rect x="275" y="263" width="137" height="20" fill="#ffffff" opacity="0.94"/>
+  <text x="408" y="278" fill="#263238" font-family="Arial, sans-serif" font-size="12" text-anchor="end">Base rate 0.391</text>
+  <rect x="686" y="230" width="124" height="20" fill="#ffffff" opacity="0.94"/>
+  <text x="806" y="245" fill="#263238" font-family="Arial, sans-serif" font-size="12" text-anchor="end">Chance 0.500</text>
+  <rect x="151" y="255.2" width="62" height="139.8" fill="#c56b45"/>
+  <rect x="248" y="212" width="62" height="183" fill="#145c52"/>
+  <rect x="554" y="208.4" width="62" height="186.6" fill="#c56b45"/>
+  <rect x="651" y="170" width="62" height="225" fill="#145c52"/>
+  <g fill="#17201d" font-family="Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle">
+    <text x="182" y="247">0.466</text><text x="279" y="204">0.610</text><text x="585" y="201">0.622</text><text x="682" y="163">0.750</text>
+  </g>
+  <g fill="#34413b" font-family="Arial, sans-serif" font-size="13" text-anchor="middle">
+    <text x="182" y="420">Rule baseline</text><text x="279" y="420">Random forest</text><text x="585" y="420">Rule baseline</text><text x="682" y="420">Random forest</text>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="14">
+    <rect x="328" y="453" width="14" height="14" fill="#c56b45"/><text x="350" y="465" fill="#17201d">Rule baseline</text>
+    <rect x="490" y="453" width="14" height="14" fill="#145c52"/><text x="512" y="465" fill="#17201d">Random forest</text>
+  </g>
+</svg>

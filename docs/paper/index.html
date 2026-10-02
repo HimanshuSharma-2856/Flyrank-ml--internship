@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A client-held-out content review ranking study on FlyRank's anonymized 30,000-row starter snapshot. The paper reports the rule baseline, model, validation design, results, and limits.">
+  <meta name="author" content="Himanshu Sharma">
+  <meta name="color-scheme" content="light">
+  <title>Which Pages Should an Editor Review First? | Himanshu Sharma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17201d;
+      --paper: #fbfcfa;
+      --green: #145c52;
+      --green-pale: #eef5f1;
+      --amber: #9a5419;
+      --muted: #52605a;
+      --rule: #d5ded9;
+      --white: #ffffff;
+      --serif: "Source Serif 4", Georgia, serif;
+      --sans: "DM Sans", sans-serif;
+      --mono: "IBM Plex Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 17px/1.66 var(--serif);
+    }
+    a { color: var(--green); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    a:hover { color: #0b4039; }
+    a:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+    .skip-link {
+      position: absolute;
+      top: -4rem;
+      left: 1rem;
+      z-index: 10;
+      padding: .65rem .9rem;
+      background: var(--ink);
+      color: var(--white);
+      font: 600 14px var(--sans);
+    }
+    .skip-link:focus { top: 1rem; }
+    .site-bar {
+      border-bottom: 1px solid var(--rule);
+      background: var(--white);
+    }
+    .site-bar-inner {
+      width: min(1080px, calc(100% - 40px));
+      min-height: 52px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      font: 600 13px/1.4 var(--mono);
+    }
+    .site-bar a { text-decoration: none; }
+    .site-name { color: var(--ink); }
+    .site-label { color: var(--muted); }
+    main {
+      width: min(860px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 58px 0 90px;
+    }
+    .paper-head {
+      padding-bottom: 26px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .eyebrow {
+      margin: 0 0 16px;
+      color: var(--green);
+      font: 600 12px/1.5 var(--mono);
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { text-wrap: balance; }
+    h1 {
+      max-width: 790px;
+      margin: 0;
+      font: 700 46px/1.12 var(--serif);
+    }
+    .subtitle {
+      max-width: 720px;
+      margin: 18px 0 18px;
+      color: #38443f;
+      font: 400 21px/1.48 var(--serif);
+    }
+    .byline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      margin: 0;
+      color: var(--muted);
+      font: 500 13px/1.5 var(--sans);
+    }
+    .abstract {
+      margin: 28px 0 24px;
+      padding: 19px 22px 20px;
+      border-left: 4px solid var(--green);
+      background: var(--green-pale);
+    }
+    .abstract h2 {
+      margin: 0 0 8px;
+      font: 700 13px/1.4 var(--mono);
+      text-transform: uppercase;
+    }
+    .abstract p { margin: 0; }
+    .abstract strong { color: #123d36; }
+    .contents {
+      margin: 28px 0 36px;
+      padding: 12px 0;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      font: 500 13px/1.8 var(--sans);
+    }
+    .contents strong {
+      margin-right: 10px;
+      color: var(--muted);
+      font: 600 11px/1.4 var(--mono);
+      text-transform: uppercase;
+    }
+    .contents a { margin-right: 12px; }
+    section { margin-top: 38px; }
+    section h2 {
+      margin: 0 0 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule);
+      font: 700 27px/1.25 var(--serif);
+    }
+    section h3 {
+      margin: 25px 0 7px;
+      font: 700 19px/1.35 var(--serif);
+    }
+    p { margin: 0 0 14px; }
+    ul, ol { margin: 0 0 17px; padding-left: 25px; }
+    li { padding-left: 3px; margin: 0 0 8px; }
+    .scope-note {
+      margin: 18px 0;
+      padding: 12px 16px;
+      border-left: 3px solid var(--amber);
+      background: #fff7ed;
+      font: 500 14px/1.55 var(--sans);
+    }
+    .feature-list {
+      padding: 13px 16px;
+      border-left: 3px solid var(--rule);
+      color: #34413b;
+      background: var(--white);
+      font: 14px/1.7 var(--mono);
+      overflow-wrap: anywhere;
+    }
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      margin: 16px 0 20px;
+      border-top: 2px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      background: var(--white);
+    }
+    table {
+      width: 100%;
+      min-width: 690px;
+      border-collapse: collapse;
+      font: 14px/1.45 var(--sans);
+    }
+    caption {
+      padding: 10px 12px;
+      text-align: left;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    th, td { padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--rule); }
+    th:first-child, td:first-child { text-align: left; }
+    thead th { color: var(--ink); font-weight: 700; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:last-child { background: #edf5f1; font-weight: 700; }
+    figure { margin: 25px 0 28px; }
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--rule);
+      background: var(--white);
+    }
+    figcaption {
+      margin-top: 9px;
+      color: #39453f;
+      font: 14px/1.55 var(--sans);
+    }
+    .figure-data {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font: 13px/1.55 var(--sans);
+    }
+    .recommendations li strong { color: #123d36; }
+    .repro {
+      padding: 14px 16px;
+      border-left: 3px solid var(--green);
+      background: var(--green-pale);
+      font: 14px/1.6 var(--sans);
+    }
+    code, pre { font-family: var(--mono); }
+    code { font-size: .88em; overflow-wrap: anywhere; }
+    pre {
+      margin: 12px 0 0;
+      padding: 13px 15px;
+      overflow-x: auto;
+      background: #f0f3f1;
+      color: #18231f;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .resource-list { font: 14px/1.6 var(--sans); }
+    footer {
+      padding: 22px 0 0;
+      border-top: 2px solid var(--ink);
+      color: var(--muted);
+      font: 13px/1.55 var(--sans);
+    }
+    footer p { margin: 0 0 7px; }
+    .acknowledgment {
+      margin-top: 36px;
+      padding-top: 4px;
+    }
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .paper-head, .abstract { animation: reveal 420ms ease-out both; }
+    @media (max-width: 700px) {
+      body { font-size: 16px; line-height: 1.62; }
+      .site-bar-inner { width: min(100% - 28px, 860px); min-height: 48px; font-size: 11px; }
+      main { width: min(100% - 32px, 860px); padding: 34px 0 64px; }
+      h1 { font-size: 33px; line-height: 1.16; }
+      .subtitle { font-size: 18px; }
+      section h2 { font-size: 24px; }
+      section h3 { font-size: 18px; }
+      .abstract { padding: 15px 16px; }
+      .contents a { display: inline-block; margin: 0 9px 3px 0; }
+      .feature-list { font-size: 12px; }
+      figure { margin: 21px 0; }
+      figcaption { font-size: 13px; }
+      pre { white-space: pre-wrap; word-break: break-word; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to paper</a>
+  <header class="site-bar">
+    <div class="site-bar-inner">
+      <a class="site-name" href="../">Himanshu Sharma</a>
+      <span class="site-label">FLYRANK · APPLIED SEARCH INTELLIGENCE</span>
+    </div>
+  </header>
+  <main id="main">
+    <header class="paper-head">
+      <p class="eyebrow">Research paper · decision-support ranking</p>
+      <h1>Which Pages Should an Editor Review First?</h1>
+      <p class="subtitle">A client-held-out content review ranking on an anonymized starter snapshot</p>
+      <p class="byline"><span>Himanshu Sharma</span><span>2 October 2026</span><span>30,000-row starter export</span></p>
+    </header>
+
+    <section class="abstract" aria-labelledby="abstract-title">
+      <h2 id="abstract-title">Abstract</h2>
+      <p><strong>Question.</strong> Which existing content items should a human review first when editorial time is limited? <strong>Data.</strong> We use the bundled 30,000-row, 44-column anonymized starter snapshot covering 32 pseudonymized clients and define a proxy decline label from recent-versus-prior impressions. <strong>Method.</strong> A random-forest ranker is compared with a transparent rule score on the same fixed-seed client-grouped holdout, excluding identifiers and label-defining fields from model features. <strong>Result.</strong> On 2,325 held-out items from six clients, model Precision@50 is 0.660 versus 0.280 for the rule and a 0.391 target prevalence. <strong>Use.</strong> The output is a human-review ordering for this snapshot, not a forecast of future performance or evidence that refreshing content causes recovery.</p>
+    </section>
+
+    <nav class="contents" aria-label="On this page">
+      <strong>Sections</strong>
+      <a href="#problem">Problem</a>
+      <a href="#data">Data</a>
+      <a href="#method">Methodology</a>
+      <a href="#results">Results</a>
+      <a href="#limits">Limitations</a>
+      <a href="#recommendations">Recommendations</a>
+      <a href="#reproducibility">Reproducibility</a>
+    </nav>
+
+    <section id="problem">
+      <h2>1. Introduction / Problem Statement</h2>
+      <p>An editor has more pages to inspect than time to inspect them. This study asks whether a compact ranking can order a review list more usefully than a transparent freshness-and-visibility rule, measured as the share of proxy-labelled declines among the first 50 items. The intended decision is what to inspect first, not what to rewrite or publish.</p>
+      <p>A false positive can spend editorial time on an item that does not match the proxy label; a false negative can delay a useful inspection. Neither cost nor the impact of an editorial action is measured here. The model is a triage aid for a supervised pilot, not an automated content workflow.</p>
+    </section>
+
+    <section id="data">
+      <h2>2. Data</h2>
+      <p>The analysis uses <code>data/raw/content_refresh_anonymized.csv</code>, the bundled FlyRank internship starter export: 30,000 content-item rows, 44 source columns, and 32 pseudonymized clients. One row represents one content item. This is a single snapshot, not a daily warehouse table. Its activity features aggregate a trailing 90-day window ending at export time; the export contains no calendar extraction date, so no calendar date range is claimed.</p>
+      <p>The proxy label compares impressions in the most recent 30 days with impressions in the previous 30 days. <code>trend_direction == "down"</code> means the recent window is more than 20% lower. The export contains no page titles, URLs, domains, client names, or raw search queries. It has 30,000 unique content IDs, no duplicate IDs, no zero-impression rows, and no items younger than 90 days; this capstone applies no further row filtering.</p>
+      <p class="scope-note"><strong>Release boundary.</strong> These results do not use the separate 78,835,655-row warehouse release described elsewhere in the repository. No warehouse tables or partitions were queried. All claims here are limited to the starter CSV and this notebook run.</p>
+      <p>Identifiers are used only for deduplication and client-group splitting. The feature frame excludes <code>content_id</code>, <code>client_id</code>, <code>is_declining_label</code>, <code>trend_direction</code>, <code>trend_pct</code>, the explicit recent/previous 30-day comparison fields, and the baseline score. Provider/model metadata is not part of this feature set. The last/previous-window fields define or overlap the target; IDs could encode identity or client membership; and the baseline is a comparator, not a predictor. Although the explicit comparison fields are excluded, trailing-90-day activity features still overlap the recent-30-day label window.</p>
+    </section>
+
+    <section id="method">
+      <h2>3. Methodology</h2>
+      <h3>Target and assumptions</h3>
+      <p>The target is the observed snapshot proxy <code>is_declining_label = (trend_direction == "down")</code>. It is not a future-month event. The analysis assumes that this proxy is useful for illustrating a review-ordering workflow on this snapshot; it does not assume a labelled decline is recoverable or that a refresh will change the outcome.</p>
+      <h3>Features and model</h3>
+      <p>The random forest uses 18 numeric and eight categorical fields. Numeric inputs: search volume, competition, cost per click, word and character counts, 90-day impressions/clicks/sessions/AI sessions, active-day counts, content age, update age, CTR, average position, engagement rate, scroll rate, and AI traffic percentage. Categorical inputs: competition level, content type, intent, age/freshness tiers, word-count tier, impression tier, and position tier.</p>
+      <p>Numeric missing values are imputed with training-set medians and missingness indicators; categorical missing values use the most frequent training value, followed by one-hot encoding. The classifier is a random forest with 100 trees, maximum depth 10, minimum leaf size 25, balanced subsampling, and seed 42. Scores order the queue; calibration was not evaluated.</p>
+      <h3>Baseline</h3>
+      <p>The transparent rule combines four percentile-ranked signals, calculated over the full snapshot: visibility (40%), update age (30%), position opportunity (25%), and content-depth gap (5%). It is scored on exactly the same held-out rows as the random forest. This ranks a known batch; it is not presented as an optimized or independently calibrated production baseline.</p>
+      <h3>Validation and leakage checks</h3>
+      <p>A fixed-seed 20% client holdout was used: six complete clients (2,325 items) were held out, with 27,675 items for training. No client or content ID overlapped across the client-grouped boundary. The rule baseline, model, and base rate all use the same test rows. A stratified row-split fallback exists in the notebook only if a group split cannot contain both classes; it was not used in this run.</p>
+      <p>The notebook asserts that IDs, the label and its source fields, explicit 30-day comparison fields, and the baseline score are not model features. These checks prevent direct label-column leakage and client overlap. They do not fix temporal overlap between trailing-90-day activity features and the recent-30-day proxy label.</p>
+      <h3>Evaluation measures</h3>
+      <p>Precision@K is the share labelled declining within the top K ranked items. Precision@50 is the primary measure because the motivating review budget is 50. Average precision summarizes ranking quality over the full holdout; ROC AUC measures pairwise discrimination. The held-out prevalence is included as the random-selection reference.</p>
+    </section>
+
+    <section id="results">
+      <h2>4. Results</h2>
+      <p>On the same 2,325 held-out items, model Precision@50 is <strong>0.660</strong>, compared with <strong>0.280</strong> for the rule baseline and <strong>0.391</strong> for random selection at the holdout base rate. That is 33 labelled items in the model's first 50 versus 14 in the rule's first 50, on this one split. Average precision is 0.610 versus 0.466; ROC AUC is 0.750 versus 0.622.</p>
+      <div class="table-wrap" role="region" aria-label="Model and baseline metrics; scroll horizontally if needed" tabindex="0">
+        <table>
+          <caption>Table 1. All ranking metrics use the identical client-held-out rows. The holdout base rate is 0.391.</caption>
+          <thead><tr><th scope="col">Method</th><th scope="col">Precision@10</th><th scope="col">Precision@20</th><th scope="col">Precision@50</th><th scope="col">Precision@100</th><th scope="col">Average precision</th><th scope="col">ROC AUC</th></tr></thead>
+          <tbody>
+            <tr><td>Expected under random selection</td><td>0.391</td><td>0.391</td><td>0.391</td><td>0.391</td><td>Not applicable</td><td>Not applicable</td></tr>
+            <tr><td>Transparent rule baseline</td><td>0.200</td><td>0.250</td><td>0.280</td><td>0.370</td><td>0.466</td><td>0.622</td></tr>
+            <tr><td>Random forest</td><td>0.600</td><td>0.800</td><td>0.660</td><td>0.710</td><td>0.610</td><td>0.750</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure role="group">
+        <img src="assets/w08_capstone_precision_at_k.svg" alt="Grouped bars compare Precision at K equals 10, 20, 50, and 100 for the rule and random forest. A dashed line marks base rate 0.391; the model is above the baseline at each shown K.">
+        <figcaption><strong>Figure 1.</strong> Precision at four review budgets on the same client holdout. At K=50, the random forest is 0.660 and the rule baseline is 0.280; the dashed reference is the 0.391 holdout prevalence.</figcaption>
+      </figure>
+      <figure role="group">
+        <img src="assets/w08_capstone_ranking_metrics.svg" alt="Two panels compare average precision, rule 0.466 and random forest 0.610 with base-rate reference 0.391; and ROC AUC, rule 0.622 and random forest 0.750 with chance reference 0.500.">
+        <figcaption><strong>Figure 2.</strong> Ranking-wide metrics on the same holdout. Average precision is compared with target prevalence; ROC AUC is compared with chance-level discrimination. The reference lines differ because the metrics have different interpretations.</figcaption>
+      </figure>
+      <p>The model exceeds the rule and random-selection reference on the selected measures in this run. This is an observed difference on one client holdout, not an estimate of expected performance across future clients or months.</p>
+    </section>
+
+    <section id="limits">
+      <h2>5. Limitations &amp; Honest Framing</h2>
+      <ul>
+        <li>The study uses the 30,000-row starter snapshot, not the 78.8-million-row warehouse release. It has no calendar extraction date.</li>
+        <li>The target is a current snapshot proxy derived from recent-versus-prior impressions, not a future outcome.</li>
+        <li>Trailing-90-day features overlap the recent-30-day label window. Excluding <code>trend_direction</code>, <code>trend_pct</code>, and explicit comparison fields prevents direct target-field leakage but does not provide temporal separation.</li>
+        <li>The grouped holdout contains six clients and is one fixed split. There are no repeated-fold uncertainty estimates or time-forward test; client composition can materially affect the result.</li>
+        <li>The baseline uses full-snapshot percentile ranks, appropriate for ranking a known batch but not evidence of a frozen, independently calibrated production baseline.</li>
+        <li>Model scores are not calibrated. Editorial labor, business value, refresh effects, and causal outcomes are unmeasured.</li>
+        <li>The export covers only the content and instrumentation present in this starter slice. Missing or absent signals do not imply low quality or no opportunity.</li>
+      </ul>
+      <p>The defensible claim is narrow: <strong>on this fixed client-held-out split of the starter snapshot, the random forest ranked the proxy label above the rule baseline at K=50 and on the reported ranking metrics.</strong> It does not show that the model will generalize to new time periods, that an item will continue to decline, or that an editorial change will improve performance.</p>
+    </section>
+
+    <section id="recommendations">
+      <h2>6. Ranked Recommendations</h2>
+      <ol class="recommendations">
+        <li><strong>Pilot the ordering with a human reviewer and fixed small batch.</strong> The observed top-50 comparison supports testing the random-forest order against the rule; it does not warrant automated edits. Record accepts, rejects, overrides, and time spent.</li>
+        <li><strong>Verify stale, visible candidates before allocating substantive work.</strong> The playbook flags items with at least 500 trailing-90-day impressions and 180 or more days since update. Check current status, intent, and recent edits first.</li>
+        <li><strong>Inspect search-intent and snippet context for low-CTR candidates.</strong> The review rule requires at least 500 impressions, a recorded average position from 1 through 20, and CTR below 0.5 percentage points. It prompts inspection, not an automatic rewrite.</li>
+        <li><strong>Use measured engagement as a secondary page-experience check.</strong> With at least 30 sessions, a positive engagement or scroll rate below 30% is a review cue. Zero or missing measurement is not evidence of poor experience.</li>
+        <li><strong>Monitor or improve measurement when no strong signal is present.</strong> “Monitor or measure” is not a healthy-page label. Compare human outcomes with the rule baseline before expanding the pilot.</li>
+      </ol>
+      <p>The held-out queue's aggregate action counts are: <code>monitor_or_measure</code> 1,650; <code>review_snippet_and_search_intent</code> 227; <code>audit_snippet_and_position</code> 212; <code>refresh_fact_check_and_prioritize</code> 187; <code>review_page_experience</code> 47; and <code>review_content_experience</code> 2. Thresholds and action names are workflow hypotheses, not calibrated risk bands or measured ROI. Every item remains subject to human review.</p>
+    </section>
+
+    <section id="reproducibility">
+      <h2>7. Reproducibility</h2>
+      <div class="repro">
+        <p>From the repository root, install the declared packages, open the capstone notebook, and run all cells from a fresh kernel:</p>
+        <pre><code>python -m pip install -r requirements.txt
+# Open work/notebooks/capstone.ipynb in VS Code or Jupyter and Run All</code></pre>
+      </div>
+      <p>The notebook fixes seed 42 and records Python 3.13.15, pandas 3.0.0, NumPy 2.4.2, and scikit-learn 1.8.0 for this run. It writes aggregate metrics and canonical figures under <code>work/</code>, then copies the SVGs into this Pages-published folder; it does not export a row-level queue. Reproduction uses the bundled anonymized starter CSV and does not require gated warehouse access.</p>
+      <ul>
+        <li><a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship">Repository</a></li>
+        <li><a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship/blob/main/work/notebooks/capstone.ipynb">Capstone notebook</a></li>
+        <li><a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship/blob/main/work/outputs/w08_capstone_metrics.json">Aggregate metrics receipt</a></li>
+      </ul>
+    </section>
+
+    <section class="acknowledgment" id="acknowledgments">
+      <h2>8. Acknowledgments &amp; Data Credit</h2>
+      <p>Built on the <a href="https://flyrank.ai/">FlyRank ML Internship dataset</a>. The separate warehouse release is not the data source for the results in this paper.</p>
+    </section>
+
+    <section id="references">
+      <h2>Reporting and Design References</h2>
+      <ul class="resource-list">
+        <li>Collins GS, Moons KGM, Dhiman P, et al. TRIPOD+AI statement: updated guidance for reporting clinical prediction models that use regression or machine learning methods. <em>BMJ</em>. 2024;385:e078378. <a href="https://www.bmj.com/content/385/bmj-2023-078378">doi:10.1136/bmj-2023-078378</a>. Used as a reporting checklist for accurate abstracts, evaluation details, limitations, and open materials; it is not a domain-specific quality standard for this non-clinical study.</li>
+        <li>NeurIPS. <a href="https://neurips.cc/public/guides/PaperChecklist">Paper Checklist Guidelines</a>. Informed the claim-scope, limitations, and reproducibility checks.</li>
+        <li>Google. <a href="https://developers.google.com/machine-learning/guides/rules-of-ml">Rules of Machine Learning</a>. Supports starting with a measurable baseline and evaluating the metric that matches the review decision.</li>
+        <li>W3C Web Accessibility Initiative. <a href="https://www.w3.org/WAI/WCAG22/Understanding/reflow.html">Reflow (WCAG 2.2, SC 1.4.10)</a>, <a href="https://www.w3.org/WAI/tutorials/images/complex/">Complex Images</a>, and <a href="https://www.w3.org/WAI/tutorials/page-structure/">Page Structure Tutorial</a>. Informed the responsive single-column layout, semantic structure, and chart descriptions with adjacent text/table equivalents.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>Himanshu Sharma · Applied Search Intelligence · FlyRank ML Internship</p>
+      <p><a href="../">Portfolio home</a> · <a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship">Source repository</a></p>
+    </footer>
+  </main>
+</body>
+</html>

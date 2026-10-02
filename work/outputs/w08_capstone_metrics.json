@@ -1,0 +1,106 @@
+{
+  "study": "Client-held-out content review ranking on the anonymized starter snapshot",
+  "source": {
+    "file": "data/raw/content_refresh_anonymized.csv",
+    "rows": 30000,
+    "source_columns": 44,
+    "distinct_clients": 32,
+    "calendar_date_fields": [],
+    "warehouse_release_used": false
+  },
+  "target": {
+    "field": "is_declining_label",
+    "definition": "trend_direction == 'down'; trend_direction is based on recent versus previous 30-day impressions",
+    "holdout_prevalence": 0.3909677419354839,
+    "temporal_overlap_caveat": "trailing-90-day features overlap the recent-30-day proxy-label window"
+  },
+  "validation": {
+    "design": "client_grouped_holdout",
+    "random_state": 42,
+    "train_rows": 27675,
+    "test_rows": 2325,
+    "held_out_client_count": 6,
+    "client_overlap_count": 0,
+    "forbidden_features_excluded": true
+  },
+  "model": {
+    "name": "RandomForestClassifier",
+    "n_estimators": 100,
+    "max_depth": 10,
+    "min_samples_leaf": 25,
+    "class_weight": "balanced_subsample",
+    "feature_count": 26,
+    "numeric_features": [
+      "search_volume", "competition", "cpc", "word_count", "char_count",
+      "impressions_90d", "clicks_90d", "sessions_90d", "ai_sessions_90d",
+      "days_with_impressions", "days_with_sessions", "content_age_days",
+      "days_since_last_update", "ctr", "avg_position", "engagement_rate",
+      "scroll_rate", "ai_traffic_pct"
+    ],
+    "categorical_features": [
+      "competition_level", "content_type", "main_intent", "age_tier",
+      "freshness_tier", "word_count_tier", "impression_tier", "position_tier"
+    ]
+  },
+  "baseline": {
+    "name": "transparent freshness-and-visibility rule",
+    "weights": {
+      "visibility": 0.4,
+      "update_age": 0.3,
+      "position_opportunity": 0.25,
+      "content_depth_gap": 0.05
+    }
+  },
+  "metrics": {
+    "random_selection": {
+      "prevalence": 0.3909677419354839
+    },
+    "rule_baseline": {
+      "precision_at_10": 0.2,
+      "precision_at_20": 0.25,
+      "precision_at_50": 0.28,
+      "precision_at_100": 0.37,
+      "average_precision": 0.4663963126229771,
+      "roc_auc": 0.6219692590727999
+    },
+    "random_forest": {
+      "precision_at_10": 0.6,
+      "precision_at_20": 0.8,
+      "precision_at_50": 0.66,
+      "precision_at_100": 0.71,
+      "average_precision": 0.6095473887890281,
+      "roc_auc": 0.7502509431734135
+    }
+  },
+  "ranked_actions_in_holdout": {
+    "audit_snippet_and_position": 212,
+    "monitor_or_measure": 1650,
+    "refresh_fact_check_and_prioritize": 187,
+    "review_content_experience": 2,
+    "review_page_experience": 47,
+    "review_snippet_and_search_intent": 227
+  },
+  "reason_code_counts_in_holdout": {
+    "engagement_review": 136,
+    "model_decline_risk": 416,
+    "no_strong_signal": 1650,
+    "visible_low_ctr": 439
+  },
+  "limitations": [
+    "starter snapshot, not the separate 78,835,655-row warehouse release",
+    "one client-grouped holdout with six held-out clients; no multi-fold uncertainty estimate",
+    "proxy label and overlapping feature window; no time-forward evaluation",
+    "no calibration, cost, revenue, or causal refresh-impact measurement",
+    "every action requires human review"
+  ],
+  "charts": [
+    "work/figures/w08_capstone_precision_at_k.svg",
+    "work/figures/w08_capstone_ranking_metrics.svg"
+  ],
+  "environment": {
+    "python": "3.13.15",
+    "pandas": "3.0.0",
+    "numpy": "2.4.2",
+    "scikit_learn": "1.8.0"
+  }
+}
