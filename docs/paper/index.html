@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A client-held-out content review ranking study on FlyRank's anonymized 30,000-row starter snapshot. The paper reports the rule baseline, model, validation design, results, and limits.">
+  <meta name="description" content="A client-held-out content review ranking study on FlyRank's anonymized 30,000-row starter snapshot. The paper reports the weighted baseline, model, validation design, results, and limits.">
   <meta name="author" content="Himanshu Sharma">
   <meta name="color-scheme" content="light">
   <title>Which Pages Should an Editor Review First? | Himanshu Sharma</title>
@@ -273,7 +273,7 @@
 
     <section class="abstract" aria-labelledby="abstract-title">
       <h2 id="abstract-title">Abstract</h2>
-      <p><strong>Question.</strong> FlyRank's content-refresh opportunity lane asks which pages to review first for refresh, expansion, protection, pruning, or monitoring when editorial capacity is limited. <strong>Data.</strong> I use the bundled 30,000-row, 44-column anonymized starter snapshot covering 32 pseudonymized clients, with a proxy label for recent impression decline. <strong>Method.</strong> A random-forest ranker is compared with a transparent rule on the same fixed-seed, client-grouped holdout, excluding IDs and label-defining fields from model features. <strong>Result.</strong> On 2,325 held-out items from six clients, model Precision@50 is 0.660 versus 0.280 for the rule and a 0.391 label prevalence. <strong>Use.</strong> This supports ordering human review for this snapshot and proxy target; it is not a future decline forecast or evidence that a refresh causes recovery.</p>
+      <p><strong>Question.</strong> FlyRank's Week 4 baseline flags pages at least 180 days since update with at least 1,000 trailing-90-day impressions; which candidates should an editor review first? <strong>Data.</strong> I use the bundled 30,000-row, 44-column anonymized starter snapshot across 32 pseudonymized clients, with a separate proxy label for recent impression decline. <strong>Method.</strong> A random-forest ranker is compared with a weighted freshness-and-visibility score on the same fixed-seed, client-grouped holdout, excluding IDs and label-defining fields from model features. <strong>Result.</strong> On 2,325 held-out items from six clients, model Precision@50 is 0.660 versus 0.280 for the weighted score and a 0.391 label prevalence. <strong>Use.</strong> This supports ordering human review for this proxy on this snapshot, not forecasting future decline or proving a refresh causes recovery.</p>
     </section>
 
     <nav class="contents" aria-label="On this page">
@@ -289,8 +289,8 @@
 
     <section id="problem">
       <h2>1. Introduction / Problem Statement</h2>
-      <p>This case study addresses FlyRank's content-refresh opportunity lane: from a portfolio of pages, which should an editor review first for refresh, expansion, protection, pruning, or monitoring? The practical tension is limited review capacity: a recent search-performance decline can identify an item for inspection, but does not by itself say which intervention is appropriate. I operationalize the lane's review-first decision as whether a compact ranking places more proxy-labelled declines in the first 50 slots than a transparent freshness-and-visibility rule.</p>
-      <p>On the anonymized starter snapshot, the random forest reached 0.660 Precision@50 versus 0.280 for the rule on one client-held-out split (base rate 0.391). That result is evidence about ranking this proxy label for review, not proof those pages need a refresh. The dataset contains no editorial outcomes or treatment comparison, so the system can order human attention but cannot choose an intervention or claim that a change will recover traffic.</p>
+      <p>This case study starts from FlyRank's Week 4 Baseline Action Score: flag pages that are both stale (at least 180 days since update) and visible (at least 1,000 trailing-90-day impressions), then rank flagged pages by log impressions for a human top-10 review. The practical problem is limited editorial capacity across a content portfolio; visibility and staleness can nominate candidates, but do not determine whether to refresh, expand, protect, prune, or monitor. The Week 4 notebook is the source of this initial rule and review workflow.</p>
+      <p>The capstone tests a related but distinct question: on unseen clients, does a random forest rank more pages with the snapshot's decline proxy near the top than the weighted freshness-and-visibility score used as the evaluation baseline? On the anonymized starter snapshot, Precision@50 is 0.660 versus 0.280 for that weighted score, with a 0.391 base rate. The Week 4 threshold flag motivates the case; it is not the baseline row behind these reported metrics. This is evidence about ordering the proxy for review, not proof that flagged pages need a refresh or that an edit will recover traffic.</p>
     </section>
 
     <section id="data">
@@ -309,9 +309,9 @@
       <p>The random forest uses 18 numeric and eight categorical fields. Numeric inputs: search volume, competition, cost per click, word and character counts, 90-day impressions/clicks/sessions/AI sessions, active-day counts, content age, update age, CTR, average position, engagement rate, scroll rate, and AI traffic percentage. Categorical inputs: competition level, content type, intent, age/freshness tiers, word-count tier, impression tier, and position tier.</p>
       <p>Numeric missing values are imputed with training-set medians and missingness indicators; categorical missing values use the most frequent training value, followed by one-hot encoding. The classifier is a random forest with 100 trees, maximum depth 10, minimum leaf size 25, balanced subsampling, and seed 42. Scores order the queue; calibration was not evaluated.</p>
       <h3>Baseline</h3>
-      <p>The transparent rule combines four percentile-ranked signals, calculated over the full snapshot: visibility (40%), update age (30%), position opportunity (25%), and content-depth gap (5%). It is scored on exactly the same held-out rows as the random forest. This ranks a known batch; it is not presented as an optimized or independently calibrated production baseline.</p>
+      <p>The Week 4 notebook's simple action rule flags pages with at least 180 days since update and at least 1,000 trailing-90-day impressions, then ranks flagged rows by log impressions. That rule motivates the human review problem. For the capstone's reported model comparison, the weighted baseline is a separate scoring rule: four percentile-ranked signals calculated over the full snapshot, visibility (40%), update age (30%), position opportunity (25%), and content-depth gap (5%). The weighted score and random forest are evaluated on exactly the same held-out rows; the metrics in this paper refer to this weighted comparator, not the Week 4 binary flag.
       <h3>Validation and leakage checks</h3>
-      <p>A fixed-seed 20% client holdout was used: six complete clients (2,325 items) were held out, with 27,675 items for training. No client or content ID overlapped across the client-grouped boundary. The rule baseline, model, and base rate all use the same test rows. A stratified row-split fallback exists in the notebook only if a group split cannot contain both classes; it was not used in this run.</p>
+      <p>A fixed-seed 20% client holdout was used: six complete clients (2,325 items) were held out, with 27,675 items for training. No client or content ID overlapped across the client-grouped boundary. The weighted baseline, model, and base rate all use the same test rows. A stratified row-split fallback exists in the notebook only if a group split cannot contain both classes; it was not used in this run.</p>
       <p>The notebook asserts that IDs, the label and its source fields, explicit 30-day comparison fields, and the baseline score are not model features. These checks prevent direct label-column leakage and client overlap. They do not fix temporal overlap between trailing-90-day activity features and the recent-30-day proxy label.</p>
       <h3>Evaluation measures</h3>
       <p>Precision@K is the share labelled declining within the top K ranked items. Precision@50 is the primary measure because the motivating review budget is 50. Average precision summarizes ranking quality over the full holdout; ROC AUC measures pairwise discrimination. The held-out prevalence is included as the random-selection reference.</p>
@@ -319,24 +319,24 @@
 
     <section id="results">
       <h2>4. Results</h2>
-      <p>On the same 2,325 held-out items, model Precision@50 is <strong>0.660</strong>, compared with <strong>0.280</strong> for the rule baseline and <strong>0.391</strong> for random selection at the holdout base rate. That is 33 labelled items in the model's first 50 versus 14 in the rule's first 50, on this one split. Average precision is 0.610 versus 0.466; ROC AUC is 0.750 versus 0.622.</p>
+      <p>On the same 2,325 held-out items, model Precision@50 is <strong>0.660</strong>, compared with <strong>0.280</strong> for the weighted freshness-and-visibility score and <strong>0.391</strong> for random selection at the holdout base rate. That is 33 labelled items in the model's first 50 versus 14 in the weighted score's first 50, on this one split. Average precision is 0.610 versus 0.466; ROC AUC is 0.750 versus 0.622. This is not a metric comparison against the Week 4 binary stale-and-visible flag.</p>
       <div class="table-wrap" role="region" aria-label="Model and baseline metrics; scroll horizontally if needed" tabindex="0">
         <table>
           <caption>Table 1. All ranking metrics use the identical client-held-out rows. The holdout base rate is 0.391.</caption>
           <thead><tr><th scope="col">Method</th><th scope="col">Precision@10</th><th scope="col">Precision@20</th><th scope="col">Precision@50</th><th scope="col">Precision@100</th><th scope="col">Average precision</th><th scope="col">ROC AUC</th></tr></thead>
           <tbody>
             <tr><td>Expected under random selection</td><td>0.391</td><td>0.391</td><td>0.391</td><td>0.391</td><td>Not applicable</td><td>Not applicable</td></tr>
-            <tr><td>Transparent rule baseline</td><td>0.200</td><td>0.250</td><td>0.280</td><td>0.370</td><td>0.466</td><td>0.622</td></tr>
+            <tr><td>Weighted freshness-and-visibility baseline</td><td>0.200</td><td>0.250</td><td>0.280</td><td>0.370</td><td>0.466</td><td>0.622</td></tr>
             <tr><td>Random forest</td><td>0.600</td><td>0.800</td><td>0.660</td><td>0.710</td><td>0.610</td><td>0.750</td></tr>
           </tbody>
         </table>
       </div>
       <figure role="group">
-        <img src="assets/w08_capstone_precision_at_k.svg" alt="Grouped bars compare Precision at K equals 10, 20, 50, and 100 for the rule and random forest. A dashed line marks base rate 0.391; the model is above the baseline at each shown K.">
-        <figcaption><strong>Figure 1.</strong> Precision at four review budgets on the same client holdout. At K=50, the random forest is 0.660 and the rule baseline is 0.280; the dashed reference is the 0.391 holdout prevalence.</figcaption>
+        <img src="assets/w08_capstone_precision_at_k.svg" alt="Grouped bars compare Precision at K equals 10, 20, 50, and 100 for the weighted baseline and random forest. A dashed line marks base rate 0.391; the model is above the baseline at each shown K.">
+        <figcaption><strong>Figure 1.</strong> Precision at four review budgets on the same client holdout. At K=50, the random forest is 0.660 and the weighted baseline is 0.280; the dashed reference is the 0.391 holdout prevalence. This weighted score is distinct from the Week 4 binary stale-and-visible flag.</figcaption>
       </figure>
       <figure role="group">
-        <img src="assets/w08_capstone_ranking_metrics.svg" alt="Two panels compare average precision, rule 0.466 and random forest 0.610 with base-rate reference 0.391; and ROC AUC, rule 0.622 and random forest 0.750 with chance reference 0.500.">
+        <img src="assets/w08_capstone_ranking_metrics.svg" alt="Two panels compare average precision, weighted baseline 0.466 and random forest 0.610 with base-rate reference 0.391; and ROC AUC, weighted baseline 0.622 and random forest 0.750 with chance reference 0.500.">
         <figcaption><strong>Figure 2.</strong> Ranking-wide metrics on the same holdout. Average precision is compared with target prevalence; ROC AUC is compared with chance-level discrimination. The reference lines differ because the metrics have different interpretations.</figcaption>
       </figure>
       <p>The model exceeds the rule and random-selection reference on the selected measures in this run. This is an observed difference on one client holdout, not an estimate of expected performance across future clients or months.</p>
@@ -353,17 +353,17 @@
         <li>Model scores are not calibrated. Editorial labor, business value, refresh effects, and causal outcomes are unmeasured.</li>
         <li>The export covers only the content and instrumentation present in this starter slice. Missing or absent signals do not imply low quality or no opportunity.</li>
       </ul>
-      <p>The defensible claim is narrow: <strong>on this fixed client-held-out split of the starter snapshot, the random forest ranked the proxy label above the rule baseline at K=50 and on the reported ranking metrics.</strong> It does not show that the model will generalize to new time periods, that an item will continue to decline, or that an editorial change will improve performance.</p>
+      <p>The defensible claim is narrow: <strong>on this fixed client-held-out split of the starter snapshot, the random forest ranked the proxy label above the weighted baseline at K=50 and on the reported ranking metrics.</strong> It does not show that the model will generalize to new time periods, that an item will continue to decline, or that an editorial change will improve performance.</p>
     </section>
 
     <section id="recommendations">
       <h2>6. Ranked Recommendations</h2>
       <ol class="recommendations">
-        <li><strong>Pilot the ordering with a human reviewer and fixed small batch.</strong> The observed top-50 comparison supports testing the random-forest order against the rule; it does not warrant automated edits. Record accepts, rejects, overrides, and time spent.</li>
+        <li><strong>Pilot the ordering with a human reviewer and fixed small batch.</strong> The observed top-50 comparison supports testing the random-forest order against the weighted baseline; it does not warrant automated edits. Record accepts, rejects, overrides, and time spent.</li>
         <li><strong>Verify stale, visible candidates before allocating substantive work.</strong> The playbook flags items with at least 500 trailing-90-day impressions and 180 or more days since update. Check current status, intent, and recent edits first.</li>
         <li><strong>Inspect search-intent and snippet context for low-CTR candidates.</strong> The review rule requires at least 500 impressions, a recorded average position from 1 through 20, and CTR below 0.5 percentage points. It prompts inspection, not an automatic rewrite.</li>
         <li><strong>Use measured engagement as a secondary page-experience check.</strong> With at least 30 sessions, a positive engagement or scroll rate below 30% is a review cue. Zero or missing measurement is not evidence of poor experience.</li>
-        <li><strong>Monitor or improve measurement when no strong signal is present.</strong> “Monitor or measure” is not a healthy-page label. Compare human outcomes with the rule baseline before expanding the pilot.</li>
+        <li><strong>Monitor or improve measurement when no strong signal is present.</strong> “Monitor or measure” is not a healthy-page label. Compare human outcomes with the weighted baseline before expanding the pilot.</li>
       </ol>
       <p>The held-out queue's aggregate action counts are: <code>monitor_or_measure</code> 1,650; <code>review_snippet_and_search_intent</code> 227; <code>audit_snippet_and_position</code> 212; <code>refresh_fact_check_and_prioritize</code> 187; <code>review_page_experience</code> 47; and <code>review_content_experience</code> 2. Thresholds and action names are workflow hypotheses, not calibrated risk bands or measured ROI. Every item remains subject to human review.</p>
     </section>
@@ -378,6 +378,7 @@
       <p>The notebook fixes seed 42 and records Python 3.13.15, pandas 3.0.0, NumPy 2.4.2, and scikit-learn 1.8.0 for this run. It writes aggregate metrics and canonical figures under <code>work/</code>, then copies the SVGs into this Pages-published folder; it does not export a row-level queue. Reproduction uses the bundled anonymized starter CSV and does not require gated warehouse access.</p>
       <ul>
         <li><a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship">Repository</a></li>
+        <li><a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship/blob/main/work/notebooks/w04_baseline_score.ipynb">Week 4 baseline action score notebook</a></li>
         <li><a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship/blob/main/work/notebooks/capstone.ipynb">Capstone notebook</a></li>
         <li><a href="https://github.com/HimanshuSharma-2856/Flyrank-ml--internship/blob/main/work/outputs/w08_capstone_metrics.json">Aggregate metrics receipt</a></li>
       </ul>
